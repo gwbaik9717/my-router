@@ -10,13 +10,23 @@ export const createRouter = () => {
   let userWindow: Window;
 
   const router = {
-    init: (window: Window = globalThis.window) => {
+    initialize: (window: Window = globalThis.window) => {
       if (!window) {
         throw new Error("Router requires a window object");
       }
 
       userWindow = window;
-      userWindow.addEventListener("popstate", () => {});
+      userWindow.addEventListener("popstate", (event: PopStateEvent) => {
+        const path = userWindow.location.pathname;
+
+        const handler = routes.get(path);
+
+        if (!handler) {
+          throw new Error("Path is not registered");
+        }
+
+        handler();
+      });
 
       initialized = true;
     },

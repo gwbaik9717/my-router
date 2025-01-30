@@ -11,6 +11,10 @@
 - [x] 라우터의 navigate 메소드를 호출하면 history 스택에 새로운 엔트리가 추가되고, URL이 변경된다.
 - [x] 라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.
 
+#### Listening
+
+- [x] 라우터는 popstate 이벤트를 감지하여 URL이 변경되면 등록된 핸들러를 실행한다.
+
 #### Path Parameters
 
 - [ ] 라우터는 URL에서 path parameter를 식별할 수 있다.

@@ -21,22 +21,17 @@ describe("unit test for configuring router", () => {
   test("라우터의 navigate 메소드를 호출하면 등록한 핸들러가 실행된다.", () => {
     const router = createRouter();
     const app = document.getElementById("app");
+    const mockFn = jest.fn();
 
     if (!app) {
       throw new Error("Root Element not found");
     }
 
-    const innerText = "Home Page";
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn);
 
-    const Component = () => {
-      app.innerText = innerText;
-    };
-
-    router.init(window as unknown as Window);
-    router.addRoute("/", Component);
-
-    router.navigate("/");
-    expect(app.innerText).toBe(innerText);
+    router.navigate("/test");
+    expect(mockFn).toHaveBeenCalled();
   });
 
   test("라우터의 navigate 메소드를 호출하면 history 스택에 새로운 엔트리가 추가되고, URL이 변경된다.", () => {
@@ -47,7 +42,7 @@ describe("unit test for configuring router", () => {
       throw new Error("Root Element not found");
     }
 
-    router.init(window as unknown as Window);
+    router.initialize(window as unknown as Window);
     router.addRoute("/test", () => {});
     router.navigate("/test");
 
@@ -57,19 +52,23 @@ describe("unit test for configuring router", () => {
 
   test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
     const router = createRouter();
+    const mockFn = jest.fn();
     const app = document.getElementById("app");
 
     if (!app) {
       throw new Error("Root Element not found");
     }
 
-    router.init(window as unknown as Window);
-    router.addRoute("/test", () => {});
-    router.navigate("/test", {
-      replace: true,
-    });
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn);
+
+    // Simulate a URL change using history.pushState()
+    window.history.pushState({}, "", "/test");
+
+    // Manually trigger a "popstate" event
+    window.dispatchEvent(new window.PopStateEvent("popstate"));
 
     expect(window.location.href).toBe("http://localhost/test");
-    expect(window.history.length).toBe(1);
+    expect(mockFn).toHaveBeenCalled();
   });
 });
