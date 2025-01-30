@@ -10,6 +10,7 @@
 - [x] 라우터의 navigate 메소드를 호출하면 등록한 핸들러가 실행된다.
 - [x] 라우터의 navigate 메소드를 호출하면 history 스택에 새로운 엔트리가 추가되고, URL이 변경된다.
 - [x] 라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.
+- [x] 라우터의 navigate 메소드를 호출할때 `state` 옵션을 사용하면 상태를 새로운 path로 전달할 수 있다.
 
 #### Listening
 

@@ -50,6 +50,31 @@ describe("unit test for configuring router", () => {
     expect(window.history.length).toBe(2);
   });
 
+  test("라우터의 navigate 메소드를 호출할때 `state` 옵션을 사용하면 상태를 새로운 path로 전달할 수 있다.", () => {
+    const router = createRouter();
+    const mockFn = jest.fn();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn);
+
+    const state = {
+      userId: 123,
+    };
+
+    router.navigate("/test", {
+      state,
+    });
+
+    expect(window.location.href).toBe("http://localhost/test");
+    expect(mockFn).toHaveBeenCalled();
+    expect(window.history.state).toEqual(state);
+  });
+
   test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();

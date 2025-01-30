@@ -1,7 +1,8 @@
 type _Function = (...args: any) => any;
 
 type NavigateOptions = {
-  replace: boolean;
+  replace?: boolean;
+  state?: any;
 };
 
 export const createRouter = () => {
@@ -35,7 +36,7 @@ export const createRouter = () => {
       routes.set(path, handler);
     },
 
-    navigate: (path: string, options?: NavigateOptions) => {
+    navigate: (path: string, options: NavigateOptions = {}) => {
       if (!initialized) {
         throw new Error("Router should be initialized first");
       }
@@ -48,10 +49,10 @@ export const createRouter = () => {
 
       const newUrl = new URL(path, userWindow.location.origin).toString();
 
-      if (options && options.replace) {
-        userWindow.history.replaceState({}, "", newUrl);
+      if (options.replace) {
+        userWindow.history.replaceState(options.state || {}, "", newUrl);
       } else {
-        userWindow.history.pushState({}, "", newUrl);
+        userWindow.history.pushState(options.state || {}, "", newUrl);
       }
 
       try {
