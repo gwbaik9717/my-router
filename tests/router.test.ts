@@ -50,6 +50,27 @@ describe("unit test for configuring router", () => {
     expect(window.history.length).toBe(2);
   });
 
+  test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
+    const router = createRouter();
+    const mockFn = jest.fn();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn);
+
+    router.navigate("/test", {
+      replace: true,
+    });
+
+    expect(window.location.href).toBe("http://localhost/test");
+    expect(mockFn).toHaveBeenCalled();
+    expect(window.history.length).toBe(1);
+  });
+
   test("라우터의 navigate 메소드를 호출할때 `state` 옵션을 사용하면 상태를 새로운 path로 전달할 수 있다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
@@ -75,7 +96,7 @@ describe("unit test for configuring router", () => {
     expect(window.history.state).toEqual(state);
   });
 
-  test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
+  test("라우터는 popstate 이벤트를 감지하여 URL이 변경되면 등록된 핸들러를 실행한다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
     const app = document.getElementById("app");
