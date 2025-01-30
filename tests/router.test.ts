@@ -47,17 +47,29 @@ describe("unit test for configuring router", () => {
       throw new Error("Root Element not found");
     }
 
-    const innerText = "Test Page";
-
-    const Component = () => {
-      app.innerText = innerText;
-    };
-
     router.init(window as unknown as Window);
-    router.addRoute("/test", Component);
+    router.addRoute("/test", () => {});
     router.navigate("/test");
 
     expect(window.location.href).toBe("http://localhost/test");
     expect(window.history.length).toBe(2);
+  });
+
+  test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
+    const router = createRouter();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.init(window as unknown as Window);
+    router.addRoute("/test", () => {});
+    router.navigate("/test", {
+      replace: true,
+    });
+
+    expect(window.location.href).toBe("http://localhost/test");
+    expect(window.history.length).toBe(1);
   });
 });

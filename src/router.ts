@@ -1,8 +1,12 @@
 type _Function = (...args: any) => any;
 
+type NavigateOptions = {
+  replace: boolean;
+};
+
 export const createRouter = () => {
   const routes = new Map<string, _Function>();
-  let isInitialized = false;
+  let initialized = false;
   let userWindow: Window;
 
   const router = {
@@ -14,15 +18,15 @@ export const createRouter = () => {
       userWindow = window;
       userWindow.addEventListener("popstate", () => {});
 
-      isInitialized = true;
+      initialized = true;
     },
 
     addRoute: (path: string, handler: _Function) => {
       routes.set(path, handler);
     },
 
-    navigate: (path: string) => {
-      if (!isInitialized) {
+    navigate: (path: string, options?: NavigateOptions) => {
+      if (!initialized) {
         throw new Error("Router should be initialized first");
       }
 
@@ -33,7 +37,12 @@ export const createRouter = () => {
       }
 
       const newUrl = new URL(path, userWindow.location.origin).toString();
-      userWindow.history.pushState({}, "", newUrl);
+
+      if (options && options.replace) {
+        userWindow.history.replaceState({}, "", newUrl);
+      } else {
+        userWindow.history.pushState({}, "", newUrl);
+      }
 
       try {
         handler();
