@@ -1,4 +1,11 @@
-type _Function = (...args: any) => any;
+type PathParams = Record<string, string>;
+
+type Params = {
+  params?: PathParams;
+  searchParams?: URLSearchParams;
+};
+
+type RouteHandler = (params: Params) => any;
 
 type NavigateOptions = {
   replace?: boolean;
@@ -6,7 +13,7 @@ type NavigateOptions = {
 };
 
 export const createRouter = () => {
-  const routes = new Map<string, _Function>();
+  const routes = new Map<string, RouteHandler>();
   let initialized = false;
   let userWindow: Window;
 
@@ -25,37 +32,44 @@ export const createRouter = () => {
           throw new Error("Path is not registered");
         }
 
-        const { handler, params } = route;
+        const { handler, params, searchParams } = route;
 
-        if (!handler) {
-          throw new Error("Path is not registered");
-        }
-
-        handler(params);
+        handler({
+          params,
+          searchParams,
+        });
       });
 
       initialized = true;
     },
 
-    addRoute: (path: string, handler: _Function) => {
+    addRoute: (path: string, handler: RouteHandler) => {
       routes.set(path, handler);
     },
 
     getRoute: (
       path: string
     ): {
-      handler: _Function;
-      params?: Record<string, string>;
+      handler: RouteHandler;
+      params?: PathParams;
+      searchParams?: URLSearchParams;
     } | null => {
-      if (routes.has(path)) {
+      const urlObj = getURLObjFromPath(path);
+      const pathname = urlObj.pathname;
+      const searchParams = urlObj.search
+        ? new URLSearchParams(urlObj.search)
+        : undefined;
+
+      if (routes.has(pathname)) {
         return {
-          handler: routes.get(path)!,
+          handler: routes.get(pathname)!,
+          searchParams,
         };
       }
 
       for (const [route, handler] of routes) {
         const routeParts = route.split("/");
-        const pathParts = path.split("/");
+        const pathParts = pathname.split("/");
 
         if (routeParts.length !== pathParts.length) {
           continue;
@@ -79,7 +93,7 @@ export const createRouter = () => {
         }
 
         if (isMatch) {
-          return { handler, params };
+          return { handler, params, searchParams };
         }
       }
 
@@ -97,7 +111,7 @@ export const createRouter = () => {
         throw new Error("Path is not registered");
       }
 
-      const { handler, params } = route;
+      const { handler, params, searchParams } = route;
 
       const newUrl = new URL(path, userWindow.location.origin).toString();
 
@@ -108,7 +122,10 @@ export const createRouter = () => {
       }
 
       try {
-        handler(params);
+        handler({
+          params,
+          searchParams,
+        });
       } catch (e: unknown) {
         if (e instanceof Error) {
           throw e;
@@ -118,4 +135,9 @@ export const createRouter = () => {
   };
 
   return router;
+};
+
+const getURLObjFromPath = (path: string) => {
+  const dummyUrl = "https://developer.mozilla.org";
+  return new URL(path, dummyUrl);
 };

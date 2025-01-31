@@ -132,10 +132,30 @@ describe("unit test for configuring router", () => {
 
     router.navigate("/test/seoul");
 
-    const params = {
-      city: "seoul",
+    const paramsObj = {
+      params: {
+        city: "seoul",
+      },
     };
 
-    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(params));
+    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(paramsObj));
+  });
+
+  test("라우터는 URL에서 search parameter를 식별할 수 있다.", () => {
+    const router = createRouter();
+    const mockFn = jest.fn();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test/:city", mockFn);
+    router.navigate("/test/seoul?province=gangnam");
+
+    const actualArgs = mockFn.mock.calls[0][0];
+    expect(actualArgs.params).toEqual({ city: "seoul" });
+    expect(actualArgs.searchParams.toString()).toBe("province=gangnam");
   });
 });
