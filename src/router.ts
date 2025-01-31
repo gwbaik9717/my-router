@@ -7,13 +7,18 @@ type Params = {
 
 type RouteHandler = (params: Params) => any;
 
+type Route = {
+  path: string;
+  handler: RouteHandler;
+};
+
 type NavigateOptions = {
   replace?: boolean;
   state?: any;
 };
 
 export const createRouter = () => {
-  const routes = new Map<string, RouteHandler>();
+  const routes = new Array<Route>();
   let initialized = false;
   let userWindow: Window;
 
@@ -44,7 +49,10 @@ export const createRouter = () => {
     },
 
     addRoute: (path: string, handler: RouteHandler) => {
-      routes.set(path, handler);
+      routes.push({
+        path,
+        handler,
+      });
     },
 
     getRoute: (
@@ -60,14 +68,14 @@ export const createRouter = () => {
         ? new URLSearchParams(urlObj.search)
         : undefined;
 
-      if (routes.has(pathname)) {
-        return {
-          handler: routes.get(pathname)!,
-          searchParams,
-        };
-      }
+      for (const { path: route, handler } of routes) {
+        if (path === route) {
+          return {
+            handler,
+            searchParams,
+          };
+        }
 
-      for (const [route, handler] of routes) {
         const routeParts = route.split("/");
         const pathParts = pathname.split("/");
 

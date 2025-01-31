@@ -158,4 +158,23 @@ describe("unit test for configuring router", () => {
     expect(actualArgs.params).toEqual({ city: "seoul" });
     expect(actualArgs.searchParams.toString()).toBe("province=gangnam");
   });
+
+  test("라우터는 등록한 라우트를 순서대로 검사한다.", () => {
+    const router = createRouter();
+    const mockFn1 = jest.fn();
+    const mockFn2 = jest.fn();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn1);
+    router.addRoute("/test", mockFn2);
+
+    router.navigate("/test");
+    expect(mockFn1).toHaveBeenCalled();
+    expect(mockFn2).not.toHaveBeenCalled();
+  });
 });
