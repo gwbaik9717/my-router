@@ -18,5 +18,5 @@
 
 #### Path Parameters
 
-- [ ] 라우터는 URL에서 path parameter를 식별할 수 있다.
+- [x] 라우터는 URL에서 path parameter를 식별할 수 있다.
 - [ ] 라우터는 URL에서 search parameter를 식별할 수 있다.

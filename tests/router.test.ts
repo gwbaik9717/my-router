@@ -117,4 +117,25 @@ describe("unit test for configuring router", () => {
     expect(window.location.href).toBe("http://localhost/test");
     expect(mockFn).toHaveBeenCalled();
   });
+
+  test("라우터는 URL에서 path parameter를 식별할 수 있다.", () => {
+    const router = createRouter();
+    const mockFn = jest.fn();
+    const app = document.getElementById("app");
+
+    if (!app) {
+      throw new Error("Root Element not found");
+    }
+
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test/:city", mockFn);
+
+    router.navigate("/test/seoul");
+
+    const params = {
+      city: "seoul",
+    };
+
+    expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(params));
+  });
 });
