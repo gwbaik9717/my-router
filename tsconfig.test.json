@@ -1,0 +1,13 @@
+{
+  "include": ["tests/**/*"],
+  "exclude": ["node_modules", "dist", "src"],
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "composite": true,
+    "esModuleInterop": true
+  },
+  "references": [{ "path": "./tsconfig.json" }]
+}

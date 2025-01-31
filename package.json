@@ -1,14 +1,37 @@
 {
-  "name": "my-router",
-  "version": "0.0.0",
-  "main": "index.js",
+  "name": "ganu-router",
+  "version": "0.0.1",
+  "description": "A lightweight TypeScript router with support for path parameters, search parameters, and browser history management",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "test": "jest"
+    "test": "jest --config jest.config.js",
+    "build": "tsc",
+    "prepublishOnly": "npm run test && npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gwbaik9717/my-router.git"
+  },
+  "keywords": [
+    "router",
+    "typescript",
+    "browser",
+    "history",
+    "spa",
+    "single-page-application"
+  ],
   "author": "Gunwoo Baik",
-  "license": "ISC",
-  "description": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gwbaik9717/my-router/issues"
+  },
+  "homepage": "https://github.com/gwbaik9717/my-router#readme",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
