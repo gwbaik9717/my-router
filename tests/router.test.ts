@@ -20,27 +20,17 @@ describe("unit test for configuring router", () => {
 
   test("라우터의 navigate 메소드를 호출하면 등록한 핸들러가 실행된다.", () => {
     const router = createRouter();
-    const app = document.getElementById("app");
     const mockFn = jest.fn();
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn);
-
     router.navigate("/test");
+
     expect(mockFn).toHaveBeenCalled();
   });
 
   test("라우터의 navigate 메소드를 호출하면 history 스택에 새로운 엔트리가 추가되고, URL이 변경된다.", () => {
     const router = createRouter();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test", () => {});
@@ -53,15 +43,9 @@ describe("unit test for configuring router", () => {
   test("라우터의 navigate 메소드를 호출할때 `replace` 옵션을 사용하면 history 스택에 새로운 엔트리가 추가되지 않고, URL만 변경된다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn);
-
     router.navigate("/test", {
       replace: true,
     });
@@ -74,19 +58,12 @@ describe("unit test for configuring router", () => {
   test("라우터의 navigate 메소드를 호출할때 `state` 옵션을 사용하면 상태를 새로운 path로 전달할 수 있다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
-
-    router.initialize(window as unknown as Window);
-    router.addRoute("/test", mockFn);
-
     const state = {
       userId: 123,
     };
 
+    router.initialize(window as unknown as Window);
+    router.addRoute("/test", mockFn);
     router.navigate("/test", {
       state,
     });
@@ -99,11 +76,6 @@ describe("unit test for configuring router", () => {
   test("라우터는 popstate 이벤트를 감지하여 URL이 변경되면 등록된 핸들러를 실행한다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn);
@@ -121,15 +93,9 @@ describe("unit test for configuring router", () => {
   test("라우터는 URL에서 path parameter를 식별할 수 있다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test/:city", mockFn);
-
     router.navigate("/test/seoul");
 
     const paramsObj = {
@@ -137,18 +103,12 @@ describe("unit test for configuring router", () => {
         city: "seoul",
       },
     };
-
     expect(mockFn).toHaveBeenCalledWith(expect.objectContaining(paramsObj));
   });
 
   test("라우터는 URL에서 search parameter를 식별할 수 있다.", () => {
     const router = createRouter();
     const mockFn = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test/:city", mockFn);
@@ -163,18 +123,40 @@ describe("unit test for configuring router", () => {
     const router = createRouter();
     const mockFn1 = jest.fn();
     const mockFn2 = jest.fn();
-    const app = document.getElementById("app");
-
-    if (!app) {
-      throw new Error("Root Element not found");
-    }
 
     router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn1);
     router.addRoute("/test", mockFn2);
-
     router.navigate("/test");
+
     expect(mockFn1).toHaveBeenCalled();
     expect(mockFn2).not.toHaveBeenCalled();
   });
+
+  test.each([
+    {
+      path: "*",
+      navigatePath: "/test",
+    },
+    {
+      path: "/test/*",
+      navigatePath: "/test/123",
+    },
+    {
+      path: "/*/test/*", // * 가 여러개 존재할 경우 첫번쨰 *만 유효
+      navigatePath: "/test/123",
+    },
+  ])(
+    "주소의 일부에 '*'를 사용하여 와일드카드 라우트를 등록할 수 있다.",
+    ({ path, navigatePath }) => {
+      const router = createRouter();
+      const mockFn = jest.fn();
+
+      router.initialize(window as unknown as Window);
+      router.addRoute(path, mockFn);
+      router.navigate(navigatePath);
+
+      expect(mockFn).toHaveBeenCalled();
+    }
+  );
 });

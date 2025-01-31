@@ -69,35 +69,44 @@ export const createRouter = () => {
         : undefined;
 
       for (const { path: route, handler } of routes) {
-        if (path === route) {
-          return {
-            handler,
-            searchParams,
-          };
-        }
-
         const routeParts = route.split("/");
         const pathParts = pathname.split("/");
-
-        if (routeParts.length !== pathParts.length) {
-          continue;
-        }
-
         const params: Record<string, string> = {};
-        let isMatch = true;
 
-        for (let i = 0; i < routeParts.length; i++) {
+        let isMatch = true;
+        let pointerRouteParts = 0;
+        let pointerPathParts = 0;
+
+        while (
+          pointerRouteParts < routeParts.length &&
+          pointerPathParts < pathParts.length
+        ) {
+          const routePart = routeParts[pointerRouteParts++];
+          const pathPart = pathParts[pointerPathParts++];
+
+          // routePart 가 '*' 일 때
+          if (routePart === "*") {
+            break;
+          }
+
           // routePart 가 ':' 로 시작할 때
-          if (routeParts[i].startsWith(":")) {
-            const paramName = routeParts[i].substring(1);
-            params[paramName] = pathParts[i];
+          if (routePart.startsWith(":")) {
+            const paramName = routePart.substring(1);
+            params[paramName] = pathPart;
             continue;
           }
 
-          if (routeParts[i] !== pathParts[i]) {
+          if (routePart !== pathPart) {
             isMatch = false;
             break;
           }
+        }
+
+        if (
+          !routeParts.includes("*") &&
+          pointerRouteParts !== pointerPathParts
+        ) {
+          return null;
         }
 
         if (isMatch) {
