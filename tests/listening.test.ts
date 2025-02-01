@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import { createRouter } from "@/domains/router";
+import { createRouter } from "@/index";
 import { JSDOM, DOMWindow } from "jsdom";
 
 describe("Listening", () => {
