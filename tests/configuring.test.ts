@@ -11,11 +11,10 @@ describe("Configuring Routes", () => {
   });
 
   test("라우터는 등록한 라우트를 순서대로 검사한다.", () => {
-    const router = createRouter();
+    const router = createRouter(window as unknown as Window);
     const mockFn1 = jest.fn();
     const mockFn2 = jest.fn();
 
-    router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn1);
     router.addRoute("/test", mockFn2);
     router.navigate("/test");
@@ -31,10 +30,9 @@ describe("Configuring Routes", () => {
   ])(
     "주소의 일부에 '*'를 사용하여 와일드카드 라우트를 등록할 수 있다.",
     ({ path, navigatePath }) => {
-      const router = createRouter();
+      const router = createRouter(window as unknown as Window);
       const mockFn = jest.fn();
 
-      router.initialize(window as unknown as Window);
       router.addRoute(path, mockFn);
       router.navigate(navigatePath);
 

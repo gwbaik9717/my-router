@@ -2,10 +2,15 @@ import { Route, RouteHandler, NavigateOptions } from "@/types";
 import { matchRoute } from "@/domains/routeMatcher";
 import { createHistoryActions } from "@/domains/historyManager";
 
-export const createRouter = () => {
+export const createRouter = (window: Window = globalThis.window) => {
   const routes = new Array<Route>();
-  let initialized = false;
   let historyActions: ReturnType<typeof createHistoryActions>;
+
+  if (!window) {
+    throw new Error("Router requires a window object");
+  }
+
+  historyActions = createHistoryActions(window);
 
   const handleRouteChange = (path: string) => {
     const route = matchRoute(path, routes);
@@ -17,29 +22,21 @@ export const createRouter = () => {
     });
   };
 
+  historyActions.listenPopState(() => {
+    handleRouteChange(window.location.pathname);
+  });
+
+  // Handle initial route
+  setTimeout(() => {
+    handleRouteChange(window.location.pathname);
+  }, 0);
+
   return {
-    initialize: (window: Window = globalThis.window) => {
-      if (!window) {
-        throw new Error("Router requires a window object");
-      }
-
-      historyActions = createHistoryActions(window);
-      historyActions.listenPopState(() => {
-        handleRouteChange(window.location.pathname);
-      });
-
-      initialized = true;
-    },
-
     addRoute: (path: string, handler: RouteHandler) => {
       routes.push({ path, handler });
     },
 
     navigate: (path: string, options: NavigateOptions = {}) => {
-      if (!initialized) {
-        throw new Error("Router should be initialized first");
-      }
-
       try {
         handleRouteChange(path);
         historyActions.navigate(path, options);

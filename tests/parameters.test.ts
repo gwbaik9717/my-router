@@ -11,10 +11,9 @@ describe("Path Parameters", () => {
   });
 
   test("라우터는 URL에서 path parameter를 식별할 수 있다.", () => {
-    const router = createRouter();
+    const router = createRouter(window as unknown as Window);
     const mockFn = jest.fn();
 
-    router.initialize(window as unknown as Window);
     router.addRoute("/test/:city", mockFn);
     router.navigate("/test/seoul");
 
@@ -26,10 +25,9 @@ describe("Path Parameters", () => {
   });
 
   test("라우터는 URL에서 search parameter를 식별할 수 있다.", () => {
-    const router = createRouter();
+    const router = createRouter(window as unknown as Window);
     const mockFn = jest.fn();
 
-    router.initialize(window as unknown as Window);
     router.addRoute("/test/:city", mockFn);
     router.navigate("/test/seoul?province=gangnam");
 

@@ -11,10 +11,9 @@ describe("Listening", () => {
   });
 
   test("라우터는 popstate 이벤트를 감지하여 URL이 변경되면 등록된 핸들러를 실행한다.", () => {
-    const router = createRouter();
+    const router = createRouter(window as unknown as Window);
     const mockFn = jest.fn();
 
-    router.initialize(window as unknown as Window);
     router.addRoute("/test", mockFn);
 
     window.history.pushState({}, "", "/test");
