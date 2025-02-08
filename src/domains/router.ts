@@ -35,6 +35,10 @@ export const createRouter = () => {
       routes.push({ path, handler });
     },
 
+    addRoutes: (newRoutes: Array<Route>) => {
+      routes.push(...newRoutes);
+    },
+
     navigate: (path: string, options: NavigateOptions = {}) => {
       if (!initialized) {
         throw new Error("Router should be initialized first");

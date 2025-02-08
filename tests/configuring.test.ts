@@ -41,4 +41,26 @@ describe("Configuring Routes", () => {
       expect(mockFn).toHaveBeenCalled();
     }
   );
+
+  test("라우터는 여러 개의 라우터를 동시에 등록할 수 있다.", () => {
+    const router = createRouter();
+    const mockFn1 = jest.fn();
+    const mockFn2 = jest.fn();
+
+    router.initialize(window as unknown as Window);
+    router.addRoutes([
+      {
+        path: "/test1",
+        handler: mockFn1,
+      },
+      {
+        path: "/test2",
+        handler: mockFn2,
+      },
+    ]);
+
+    router.navigate("/test2");
+
+    expect(mockFn2).toHaveBeenCalled();
+  });
 });
