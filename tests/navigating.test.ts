@@ -67,4 +67,57 @@ describe("Navigating", () => {
     expect(mockFn).toHaveBeenCalled();
     expect(window.history.state).toEqual(state);
   });
+
+  test("라우터는 beforeLoad 옵션을 통해 route의 handler가 실행되기 전에 beforeRouteHandler를 실행시킬 수 있다.", () => {
+    const router = createRouter();
+    const mockFn1 = jest.fn();
+    const mockFn2 = jest.fn();
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [
+        {
+          path: "/test",
+          handler: mockFn1,
+          beforeLoad: mockFn2,
+        },
+      ],
+    });
+
+    router.navigate("/test");
+    expect(mockFn1).toHaveBeenCalled();
+    expect(mockFn2).toHaveBeenCalledWith(
+      expect.objectContaining({
+        path: "/test",
+        params: {},
+      })
+    );
+  });
+
+  test("beforeRouteHandler 에서 error 를 throw 한다면, 등록된 route handler 는 실행되지 않는다.", () => {
+    const router = createRouter();
+    const mockFn1 = jest.fn();
+    const mockFn2 = jest.fn();
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [
+        {
+          path: "/",
+          handler: mockFn1,
+        },
+        {
+          path: "/test",
+          handler: mockFn2,
+          beforeLoad: () => {
+            throw router.navigate("/");
+          },
+        },
+      ],
+    });
+
+    router.navigate("/test");
+    expect(mockFn1).toHaveBeenCalled();
+    expect(mockFn2).not.toHaveBeenCalled();
+  });
 });

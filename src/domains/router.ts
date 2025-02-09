@@ -18,14 +18,25 @@ export const createRouter = () => {
       return;
     }
 
+    if (route.beforeLoad) {
+      try {
+        route.beforeLoad({
+          path: route.path,
+          params: route.params,
+        });
+      } catch (e: unknown) {
+        return;
+      }
+    }
+
     route.handler({
       params: route.params,
       searchParams: route.searchParams,
     });
   };
 
-  const addRoute = (path: string, handler: RouteHandler) => {
-    routes.push({ path, handler });
+  const addRoute = (route: Route) => {
+    routes.push(route);
   };
 
   const addRoutes = (newRoutes: Array<Route>) => {
