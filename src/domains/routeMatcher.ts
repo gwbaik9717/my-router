@@ -8,10 +8,10 @@ export const matchRoute = (path: string, routes: Route[]) => {
     ? new URLSearchParams(urlObj.search)
     : undefined;
 
-  for (const { path: route, handler } of routes) {
-    const { isMatch, params } = matchPath(pathname, route);
+  for (const route of routes) {
+    const { isMatch, params } = matchPath(pathname, route.path);
     if (isMatch) {
-      return { handler, params, searchParams };
+      return { params, searchParams, ...route };
     }
   }
   return null;

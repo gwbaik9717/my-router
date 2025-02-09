@@ -18,6 +18,17 @@ export const createRouter = () => {
       return;
     }
 
+    if (route.beforeLoad) {
+      try {
+        route.beforeLoad({
+          path: route.path,
+          params: route.params,
+        });
+      } catch (e: unknown) {
+        return;
+      }
+    }
+
     route.handler({
       params: route.params,
       searchParams: route.searchParams,
