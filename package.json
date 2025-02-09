@@ -1,6 +1,6 @@
 {
   "name": "ganu-router",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A lightweight TypeScript router with support for path parameters, search parameters, and browser history management",
   "main": "dist/index.js",
   "module": "dist/index.js",
