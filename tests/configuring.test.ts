@@ -10,14 +10,33 @@ describe("Configuring Routes", () => {
     window = dom.window;
   });
 
+  test("앱에 최초 진입시 현재 URL에 해당하는 라우트 핸들러가 실행된다", () => {
+    const mockFn = jest.fn();
+    const router = createRouter();
+
+    // Set initial URL
+    window.history.pushState({}, "", "/initial-path");
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [{ path: "/initial-path", handler: mockFn }],
+    });
+
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+
   test("라우터는 등록한 라우트를 순서대로 검사한다.", () => {
     const router = createRouter();
     const mockFn1 = jest.fn();
     const mockFn2 = jest.fn();
 
-    router.initialize(window as unknown as Window);
-    router.addRoute("/test", mockFn1);
-    router.addRoute("/test", mockFn2);
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [
+        { path: "/test", handler: mockFn1 },
+        { path: "/test", handler: mockFn2 },
+      ],
+    });
     router.navigate("/test");
 
     expect(mockFn1).toHaveBeenCalled();
@@ -34,8 +53,10 @@ describe("Configuring Routes", () => {
       const router = createRouter();
       const mockFn = jest.fn();
 
-      router.initialize(window as unknown as Window);
-      router.addRoute(path, mockFn);
+      router.initialize({
+        window: window as unknown as Window,
+        routes: [{ path, handler: mockFn }],
+      });
       router.navigate(navigatePath);
 
       expect(mockFn).toHaveBeenCalled();
@@ -47,20 +68,22 @@ describe("Configuring Routes", () => {
     const mockFn1 = jest.fn();
     const mockFn2 = jest.fn();
 
-    router.initialize(window as unknown as Window);
-    router.addRoutes([
-      {
-        path: "/test1",
-        handler: mockFn1,
-      },
-      {
-        path: "/test2",
-        handler: mockFn2,
-      },
-    ]);
+    router.initialize({
+      window: window as unknown as Window,
+
+      routes: [
+        {
+          path: "/test1",
+          handler: mockFn1,
+        },
+        {
+          path: "/test2",
+          handler: mockFn2,
+        },
+      ],
+    });
 
     router.navigate("/test2");
-
     expect(mockFn2).toHaveBeenCalled();
   });
 });

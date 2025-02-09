@@ -14,8 +14,10 @@ describe("Listening", () => {
     const router = createRouter();
     const mockFn = jest.fn();
 
-    router.initialize(window as unknown as Window);
-    router.addRoute("/test", mockFn);
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [{ path: "/test", handler: mockFn }],
+    });
 
     window.history.pushState({}, "", "/test");
     window.dispatchEvent(new window.PopStateEvent("popstate"));

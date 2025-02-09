@@ -11,11 +11,14 @@ describe("Path Parameters", () => {
   });
 
   test("라우터는 URL에서 path parameter를 식별할 수 있다.", () => {
-    const router = createRouter();
     const mockFn = jest.fn();
+    const router = createRouter();
+    router.initialize({
+      window: window as unknown as Window,
 
-    router.initialize(window as unknown as Window);
-    router.addRoute("/test/:city", mockFn);
+      routes: [{ path: "/test/:city", handler: mockFn }],
+    });
+
     router.navigate("/test/seoul");
 
     expect(mockFn).toHaveBeenCalledWith(
@@ -29,8 +32,10 @@ describe("Path Parameters", () => {
     const router = createRouter();
     const mockFn = jest.fn();
 
-    router.initialize(window as unknown as Window);
-    router.addRoute("/test/:city", mockFn);
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [{ path: "/test/:city", handler: mockFn }],
+    });
     router.navigate("/test/seoul?province=gangnam");
 
     const actualArgs = mockFn.mock.calls[0][0];
