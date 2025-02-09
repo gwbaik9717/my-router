@@ -35,8 +35,8 @@ export const createRouter = () => {
     });
   };
 
-  const addRoute = (path: string, handler: RouteHandler) => {
-    routes.push({ path, handler });
+  const addRoute = (route: Route) => {
+    routes.push(route);
   };
 
   const addRoutes = (newRoutes: Array<Route>) => {
