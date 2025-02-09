@@ -14,7 +14,9 @@ export const createRouter = () => {
 
   const handleRouteChange = (path: string) => {
     const route = matchRoute(path, routes);
-    if (!route) throw new Error("Path is not registered");
+    if (!route) {
+      return;
+    }
 
     route.handler({
       params: route.params,

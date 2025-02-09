@@ -16,10 +16,7 @@ describe("Listening", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        { path: "/", handler: () => {} },
-        { path: "/test", handler: mockFn },
-      ],
+      routes: [{ path: "/test", handler: mockFn }],
     });
 
     window.history.pushState({}, "", "/test");

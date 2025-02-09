@@ -16,10 +16,7 @@ describe("Path Parameters", () => {
     router.initialize({
       window: window as unknown as Window,
 
-      routes: [
-        { path: "/", handler: () => {} },
-        { path: "/test/:city", handler: mockFn },
-      ],
+      routes: [{ path: "/test/:city", handler: mockFn }],
     });
 
     router.navigate("/test/seoul");
@@ -37,10 +34,7 @@ describe("Path Parameters", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        { path: "/", handler: () => {} },
-        { path: "/test/:city", handler: mockFn },
-      ],
+      routes: [{ path: "/test/:city", handler: mockFn }],
     });
     router.navigate("/test/seoul?province=gangnam");
 

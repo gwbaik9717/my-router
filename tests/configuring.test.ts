@@ -33,7 +33,6 @@ describe("Configuring Routes", () => {
     router.initialize({
       window: window as unknown as Window,
       routes: [
-        { path: "/", handler: () => {} },
         { path: "/test", handler: mockFn1 },
         { path: "/test", handler: mockFn2 },
       ],
@@ -56,10 +55,7 @@ describe("Configuring Routes", () => {
 
       router.initialize({
         window: window as unknown as Window,
-        routes: [
-          { path: "/", handler: () => {} },
-          { path, handler: mockFn },
-        ],
+        routes: [{ path, handler: mockFn }],
       });
       router.navigate(navigatePath);
 
@@ -76,7 +72,6 @@ describe("Configuring Routes", () => {
       window: window as unknown as Window,
 
       routes: [
-        { path: "/", handler: () => {} },
         {
           path: "/test1",
           handler: mockFn1,

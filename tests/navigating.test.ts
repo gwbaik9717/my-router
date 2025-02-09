@@ -16,10 +16,7 @@ describe("Navigating", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        { path: "/", handler: () => {} },
-        { path: "/test", handler: mockFn },
-      ],
+      routes: [{ path: "/test", handler: mockFn }],
     });
 
     router.navigate("/test");
@@ -32,13 +29,7 @@ describe("Navigating", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        {
-          path: "/",
-          handler: () => {},
-        },
-        { path: "/test", handler: () => {} },
-      ],
+      routes: [{ path: "/test", handler: () => {} }],
     });
     router.navigate("/test");
 
@@ -52,13 +43,7 @@ describe("Navigating", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        {
-          path: "/",
-          handler: () => {},
-        },
-        { path: "/test", handler: mockFn },
-      ],
+      routes: [{ path: "/test", handler: mockFn }],
     });
     router.navigate("/test", { replace: true });
 
@@ -74,13 +59,7 @@ describe("Navigating", () => {
 
     router.initialize({
       window: window as unknown as Window,
-      routes: [
-        {
-          path: "/",
-          handler: () => {},
-        },
-        { path: "/test", handler: mockFn },
-      ],
+      routes: [{ path: "/test", handler: mockFn }],
     });
     router.navigate("/test", { state });
 
