@@ -1,7 +1,10 @@
-import { Route } from "../types";
+import { MatchedRoute, Params, Route } from "../types";
 import { getURLObjFromPath } from "../utils";
 
-export const matchRoute = (path: string, routes: Route[]) => {
+export const matchRoute = (
+  path: string,
+  routes: Route[]
+): MatchedRoute | null => {
   const urlObj = getURLObjFromPath(path);
   const pathname = urlObj.pathname;
   const searchParams = urlObj.search
@@ -9,9 +12,20 @@ export const matchRoute = (path: string, routes: Route[]) => {
     : undefined;
 
   for (const route of routes) {
-    const { isMatch, params } = matchPath(pathname, route.path);
+    const { isMatch, params: matchedParams } = matchPath(pathname, route.path);
     if (isMatch) {
-      return { params, searchParams, ...route };
+      const params: Params = {
+        params: matchedParams,
+      };
+
+      if (searchParams) {
+        params.searchParams = searchParams;
+      }
+
+      return {
+        params,
+        ...route,
+      };
     }
   }
   return null;

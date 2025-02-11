@@ -20,6 +20,10 @@ export type Route = {
   beforeLoad?: BeforeLoadHandler;
 };
 
+export type MatchedRoute = Route & {
+  params: Params;
+};
+
 export type NavigateOptions = {
   replace?: boolean;
   state?: any;

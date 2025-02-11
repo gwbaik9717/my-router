@@ -1,4 +1,4 @@
-import { Route, RouteHandler, NavigateOptions } from "@/types";
+import { Route, RouteHandler, NavigateOptions, MatchedRoute } from "@/types";
 import { matchRoute } from "@/domains/routeMatcher";
 import { createHistoryActions } from "@/domains/historyManager";
 
@@ -12,27 +12,34 @@ export const createRouter = () => {
   let initialized = false;
   let historyActions: ReturnType<typeof createHistoryActions>;
 
-  const handleRouteChange = (path: string) => {
-    const route = matchRoute(path, routes);
-    if (!route) {
+  const handleRouteBeforeLoad = (route: MatchedRoute) => {
+    if (!route.beforeLoad) {
       return;
     }
 
-    if (route.beforeLoad) {
-      try {
-        route.beforeLoad({
-          path: route.path,
-          params: route.params,
-        });
-      } catch (e: unknown) {
-        return;
-      }
+    route.beforeLoad({
+      path: route.path,
+      params: route.params,
+    });
+  };
+
+  const handleRouteAfterLoad = (route: MatchedRoute) => {
+    route.handler(route.params);
+  };
+
+  const processRoute = (path: string): MatchedRoute | null => {
+    const route = matchRoute(path, routes);
+    if (!route) {
+      return null;
     }
 
-    route.handler({
-      params: route.params,
-      searchParams: route.searchParams,
-    });
+    try {
+      handleRouteBeforeLoad(route);
+    } catch (e: unknown) {
+      return null;
+    }
+
+    return route;
   };
 
   const addRoute = (route: Route) => {
@@ -46,39 +53,41 @@ export const createRouter = () => {
   return {
     initialize: (options?: RouterOptions) => {
       const window = options?.window ?? globalThis.window;
+      if (!window) throw new Error("Router requires a window object");
 
-      if (!window) {
-        throw new Error("Router requires a window object");
-      }
-
-      if (options?.routes && options.routes.length > 0) {
+      if (options?.routes) {
         addRoutes(options.routes);
       }
 
-      historyActions = createHistoryActions(window);
-      historyActions.listenPopState(() => {
-        handleRouteChange(window.location.pathname);
-      });
+      const handleRoute = () => {
+        const route = processRoute(window.location.pathname);
+        if (route) {
+          handleRouteAfterLoad(route);
+        }
+      };
 
-      // navigate on load
-      handleRouteChange(window.location.pathname);
+      // popstate 이벤트 헨들러 등록
+      historyActions = createHistoryActions(window);
+      historyActions.listenPopState(handleRoute);
+
+      // Handle initial route
+      handleRoute();
 
       initialized = true;
     },
+
     addRoute,
     addRoutes,
+
     navigate: (path: string, options: NavigateOptions = {}) => {
       if (!initialized) {
         throw new Error("Router should be initialized first");
       }
 
-      try {
-        handleRouteChange(path);
+      const route = processRoute(path);
+      if (route) {
         historyActions.navigate(path, options);
-      } catch (e: unknown) {
-        if (e instanceof Error) {
-          throw e;
-        }
+        handleRouteAfterLoad(route);
       }
     },
   };
