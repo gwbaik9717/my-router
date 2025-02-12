@@ -80,10 +80,10 @@ export const createRouter = () => {
       historyActions = createHistoryActions(window);
       historyActions.listenPopState(handleRoute);
 
+      initialized = true;
+
       // Handle initial route
       handleRoute();
-
-      initialized = true;
     },
 
     addRoute,
