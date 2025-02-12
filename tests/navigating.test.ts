@@ -89,7 +89,9 @@ describe("Navigating", () => {
     expect(mockFn2).toHaveBeenCalledWith(
       expect.objectContaining({
         path: "/test",
-        params: {},
+        params: {
+          params: {},
+        },
       })
     );
   });
