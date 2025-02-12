@@ -42,4 +42,21 @@ describe("Path Parameters", () => {
     expect(actualArgs.params).toEqual({ city: "seoul" });
     expect(actualArgs.searchParams.toString()).toBe("province=gangnam");
   });
+
+  test("라우터는 getParams를 통해 현재 route의 params 에 대한 정보를 가져올 수 있다.", () => {
+    const router = createRouter();
+    const mockFn = jest.fn();
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [{ path: "/test/:city", handler: mockFn }],
+    });
+    router.navigate("/test/seoul?province=gangnam");
+
+    const params = router.getParams();
+    expect(params).toEqual({
+      params: { city: "seoul" },
+      searchParams: new URLSearchParams("province=gangnam"),
+    });
+  });
 });

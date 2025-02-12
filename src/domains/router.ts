@@ -1,4 +1,10 @@
-import { Route, RouteHandler, NavigateOptions, MatchedRoute } from "@/types";
+import {
+  Route,
+  RouteHandler,
+  NavigateOptions,
+  MatchedRoute,
+  Params,
+} from "@/types";
 import { matchRoute } from "@/domains/routeMatcher";
 import { createHistoryActions } from "@/domains/historyManager";
 
@@ -11,6 +17,9 @@ export const createRouter = () => {
   const routes = new Array<Route>();
   let initialized = false;
   let historyActions: ReturnType<typeof createHistoryActions>;
+
+  // Current Matching Route
+  let currentRoute: MatchedRoute | null = null;
 
   const handleRouteBeforeLoad = (route: MatchedRoute) => {
     if (!route.beforeLoad) {
@@ -25,6 +34,7 @@ export const createRouter = () => {
 
   const handleRouteAfterLoad = (route: MatchedRoute) => {
     route.handler(route.params);
+    currentRoute = route;
   };
 
   const processRoute = (path: string): MatchedRoute | null => {
@@ -87,8 +97,23 @@ export const createRouter = () => {
       const route = processRoute(path);
       if (route) {
         historyActions.navigate(path, options);
+
+        currentRoute = route;
+
         handleRouteAfterLoad(route);
       }
+    },
+
+    getParams: (): Params => {
+      if (!initialized) {
+        throw new Error("Router should be initialized first");
+      }
+
+      if (!currentRoute) {
+        throw new Error("There is no matching route.");
+      }
+
+      return currentRoute.params;
     },
   };
 };
