@@ -59,4 +59,53 @@ describe("Path Parameters", () => {
       searchParams: new URLSearchParams("province=gangnam"),
     });
   });
+
+  test("route handler 내부에서 getParams를 통해 현재 라우트에 대한 정보를 가져올 수 있다.", () => {
+    const router = createRouter();
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [
+        {
+          path: "/test/:city",
+          handler: () => {
+            const params = router.getParams();
+
+            expect(params).toEqual({
+              params: { city: "seoul" },
+              searchParams: new URLSearchParams("province=gangnam"),
+            });
+          },
+        },
+      ],
+    });
+
+    router.navigate("/test/seoul?province=gangnam");
+  });
+
+  test("앱 최초 진입 시에도 route handler 내부에서 getParams를 통해 현재 라우트에 대한 정보를 가져올 수 있다.", () => {
+    const dom = new JSDOM(`<!DOCTYPE html>`, {
+      url: "http://localhost/test/seoul?province=gangnam",
+    });
+    window = dom.window;
+
+    const router = createRouter();
+
+    router.initialize({
+      window: window as unknown as Window,
+      routes: [
+        {
+          path: "/test/:city",
+          handler: () => {
+            const params = router.getParams();
+
+            expect(params).toEqual({
+              params: { city: "seoul" },
+              searchParams: new URLSearchParams("province=gangnam"),
+            });
+          },
+        },
+      ],
+    });
+  });
 });

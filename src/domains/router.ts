@@ -1,10 +1,4 @@
-import {
-  Route,
-  RouteHandler,
-  NavigateOptions,
-  MatchedRoute,
-  Params,
-} from "@/types";
+import { Route, NavigateOptions, MatchedRoute, Params } from "@/types";
 import { matchRoute } from "@/domains/routeMatcher";
 import { createHistoryActions } from "@/domains/historyManager";
 
@@ -33,8 +27,13 @@ export const createRouter = () => {
   };
 
   const handleRouteAfterLoad = (route: MatchedRoute) => {
-    route.handler(route.params);
     currentRoute = route;
+
+    try {
+      route.handler(currentRoute.params);
+    } catch (e: unknown) {
+      console.error(e);
+    }
   };
 
   const processRoute = (path: string): MatchedRoute | null => {
@@ -97,9 +96,6 @@ export const createRouter = () => {
       const route = processRoute(path);
       if (route) {
         historyActions.navigate(path, options);
-
-        currentRoute = route;
-
         handleRouteAfterLoad(route);
       }
     },
