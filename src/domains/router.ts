@@ -69,7 +69,7 @@ export const createRouter = () => {
       }
 
       const handleRoute = () => {
-        const route = processRoute(window.location.pathname);
+        const route = processRoute(window.location.href);
         if (route) {
           handleRouteAfterLoad(route);
         }
